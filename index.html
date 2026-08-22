@@ -977,6 +977,7 @@ input {
                             <th id="tableName2">Player 2</th>
                             <th id="tableName3">Player 3</th>
                             <th id="tableName4">Player 4</th>
+                            <th>Round Total</th>
                         </tr>
                     </thead>
 
@@ -1316,6 +1317,20 @@ console.log("King Kong: scanot.js loaded.");
                     row.appendChild(cell);
 
                 }
+                const roundTotal =
+    entry.scores.reduce(function (sum, score) {
+
+        return sum + (Number(score) || 0);
+
+    }, 0);
+
+
+const totalCell =
+    document.createElement("td");
+
+totalCell.textContent = roundTotal;
+
+row.appendChild(totalCell);
 
                 scoreTableBody.appendChild(row);
 
