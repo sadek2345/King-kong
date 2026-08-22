@@ -755,6 +755,83 @@ input {
         border-color: var(--border);
     }
 }
+        /* =========================================
+   ROUND WINNER POPUP
+========================================= */
+
+.winner-popup {
+    position: fixed;
+    z-index: 3000;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.72);
+    backdrop-filter: blur(8px);
+}
+
+.winner-popup.hidden {
+    display: none;
+}
+
+.winner-card {
+    width: min(360px, 90vw);
+    padding: 32px 25px 28px;
+    border: 1px solid rgba(124, 92, 255, 0.35);
+    border-radius: 26px;
+    background: var(--surface);
+    box-shadow:
+        0 25px 80px rgba(0, 0, 0, 0.55),
+        0 0 35px rgba(124, 92, 255, 0.12);
+    text-align: center;
+    animation: winnerPopupIn 0.35s ease;
+}
+
+.winner-crown {
+    margin-bottom: 5px;
+    font-size: 46px;
+}
+
+.winner-name {
+    margin-top: 4px;
+    color: white;
+    font-size: 34px;
+    line-height: 1.1;
+    font-weight: 900;
+    text-align: center;
+    overflow-wrap: anywhere;
+}
+
+.winner-win {
+    margin-top: 6px;
+    color: #f5c542;
+    font-size: 28px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    text-align: center;
+}
+
+.winner-round {
+    margin-top: 10px;
+    color: white;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-align: center;
+}
+
+@keyframes winnerPopupIn {
+    from {
+        opacity: 0;
+        transform: scale(0.82) translateY(15px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
     </style>
 </head>
 
@@ -1000,7 +1077,27 @@ input {
 
             </div>
         </section>
+        
+   <!-- Round Winner Popup -->
+<div id="winnerPopup" class="winner-popup hidden">
+    <div class="winner-card">
 
+        <div class="winner-crown">👑</div>
+
+        <div id="winnerName" class="winner-name">
+            SADEK
+        </div>
+
+        <div id="winnerWin" class="winner-win">
+            WIN
+        </div>
+
+        <div id="winnerRound" class="winner-round">
+            ROUND 1
+        </div>
+
+    </div>
+</div>
 
         <!-- Reset Confirmation Modal -->
         <div
@@ -1523,6 +1620,71 @@ row.appendChild(totalCell);
                 scores: scores
 
             });
+            /* =========================
+   ROUND WINNER / TIE
+========================= */
+
+const roundNumber = entries.length;
+
+const highestScore = Math.max(...scores);
+
+const winnerIndexes = scores.reduce(
+    function (indexes, score, index) {
+
+        if (score === highestScore) {
+            indexes.push(index);
+        }
+
+        return indexes;
+
+    },
+    []
+);
+
+
+const winnerNames = winnerIndexes.map(
+    function (index) {
+        return getPlayerName(index);
+    }
+);
+
+
+const winnerPopup = get("winnerPopup");
+const winnerNameElement = get("winnerName");
+const winnerWinElement = get("winnerWin");
+const winnerRoundElement = get("winnerRound");
+
+
+if (winnerIndexes.length === 1) {
+
+    winnerNameElement.textContent =
+        winnerNames[0];
+
+    winnerWinElement.textContent =
+        "WIN";
+
+} else {
+
+    winnerNameElement.textContent =
+        winnerNames.join(" V/S ");
+
+    winnerWinElement.textContent =
+        "SAME SCORE";
+}
+
+
+winnerRoundElement.textContent =
+    "ROUND " + roundNumber;
+
+
+winnerPopup.classList.remove("hidden");
+
+
+setTimeout(function () {
+
+    winnerPopup.classList.add("hidden");
+
+}, 3000);
 
 
             for (let i = 0; i < PLAYER_COUNT; i++) {
