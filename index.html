@@ -832,6 +832,65 @@ input {
         transform: scale(1) translateY(0);
     }
 }
+
+        /* =========================================
+   ROUND WARNING POPUP
+========================================= */
+
+.warning-card {
+    width: min(360px, 90vw);
+    padding: 32px 25px 28px;
+    border: 1px solid rgba(255, 92, 108, 0.45);
+    border-radius: 26px;
+    background: var(--surface);
+    box-shadow:
+        0 25px 80px rgba(0, 0, 0, 0.55),
+        0 0 35px rgba(255, 92, 108, 0.15);
+    text-align: center;
+}
+
+.warning-icon {
+    margin-bottom: 8px;
+    font-size: 48px;
+}
+
+.warning-title {
+    color: #ff5c6c;
+    font-size: 25px;
+    font-weight: 900;
+    letter-spacing: 1px;
+}
+
+.warning-message {
+    margin-top: 8px;
+    color: #ff5c6c;
+    font-size: 18px;
+    font-weight: 800;
+}
+
+.warning-current {
+    margin-top: 12px;
+    color: white;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.close-warning-btn {
+    width: 100%;
+    margin-top: 22px;
+    min-height: 48px;
+    border: none;
+    border-radius: 13px;
+    background: #ff5c6c;
+    color: white;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.close-warning-btn:active {
+    transform: scale(0.97);
+}
     </style>
 </head>
 
@@ -1095,6 +1154,34 @@ input {
         <div id="winnerRound" class="winner-round">
             ROUND 1
         </div>
+
+    </div>
+</div>
+        <!-- Round Warning Popup -->
+<div id="warningPopup" class="winner-popup hidden">
+    <div class="warning-card">
+
+        <div class="warning-icon">⚠️</div>
+
+        <div class="warning-title">
+            ROUND TOTAL ERROR
+        </div>
+
+        <div id="warningMessage" class="warning-message">
+            TOTAL MUST BE 360
+        </div>
+
+        <div id="warningCurrent" class="warning-current">
+            CURRENT TOTAL: 350
+        </div>
+
+        <button
+            id="closeWarningBtn"
+            class="close-warning-btn"
+            type="button"
+        >
+            Close
+        </button>
 
     </div>
 </div>
@@ -1614,6 +1701,32 @@ row.appendChild(totalCell);
 
             }
 
+             /* =========================
+   ROUND TOTAL CHECK
+========================= */
+
+const roundTotal = scores.reduce(
+    function (sum, score) {
+        return sum + (Number(score) || 0);
+    },
+    0
+);
+
+if (roundTotal !== 360) {
+
+    const warningPopup =
+        get("warningPopup");
+
+    const warningCurrent =
+        get("warningCurrent");
+
+    warningCurrent.textContent =
+        "CURRENT TOTAL: " + roundTotal;
+
+    warningPopup.classList.remove("hidden");
+
+    return;
+}
 
             entries.push({
 
@@ -1856,6 +1969,19 @@ setTimeout(function () {
             "click",
             resetGame
         );
+
+        /* =========================
+   WARNING CLOSE BUTTON
+========================= */
+
+get("closeWarningBtn").addEventListener(
+    "click",
+    function () {
+
+        get("warningPopup").classList.add("hidden");
+
+    }
+);
 
 
         resetModal.addEventListener(
